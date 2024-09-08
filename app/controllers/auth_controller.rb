@@ -1,14 +1,13 @@
-# app/controllers/auth_controller.rb
 class AuthController < ApplicationController
   # POST /login
   def login
-	@user = User.find_by(email: params[:email])
+	@user = User.or({ email: params[:login] }, { username: params[:login] }).first
 
 	if @user&.authenticate(params[:password])
 	  token = @user.generate_jwt
 	  render json: { token: token, user: @user }, status: :ok
 	else
-	  render json: { error: 'Invalid email or password' }, status: :unauthorized
+	  render json: { error: 'Invalid email/username or password' }, status: :unauthorized
 	end
   end
 
