@@ -16,12 +16,14 @@ class PostsController < ApplicationController
     )
   end
 
-  # GET /posts/:id
+  # GET /posts/:uuid
   def show
     render json: @post.as_json(
       methods: :time_since_posted,
       include: {
-        forum: { only: [:name] },
+        forum: { except: [:_id] , include: {
+          forum_emojis: { only: :emoji }
+        }},
         author: { only: [:name, :profile_picture, :theme_color, :description] }
       }
     )
@@ -66,7 +68,8 @@ class PostsController < ApplicationController
   private
 
   def set_post
-    @post = Post.find(params[:id])
+    @post = Post.find_by(uuid: params[:uuid])
+    render json: { error: 'Post not found' }, status: :not_found unless @post
   end
 
   def post_params

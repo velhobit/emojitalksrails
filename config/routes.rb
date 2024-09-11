@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   resources :forum_emojis
   
   # Rotas para posts
-  resources :posts
+  resources :posts, param: :uuid
   
   # Rotas para comentários
   resources :comments
