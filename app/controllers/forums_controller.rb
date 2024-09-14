@@ -18,12 +18,15 @@ class ForumsController < ApplicationController
     # Busca o fórum pelo alias
     @forum = Forum.find_by(alias: params[:alias])
   
-    # Se o fórum for encontrado, buscamos os posts associados
     if @forum
+      # Busca os posts associados ao fórum
       @posts = Post.where(forum_id: @forum.id)
   
-      # Retorna os posts no formato JSON
-      render json: @posts.as_json(only: [:uuid, :title, :content, :created_at], methods: [:time_since_posted])
+      # Retorna o fórum e os posts no formato JSON
+      render json: {
+        forum: @forum.as_json(only: [:id, :alias, :name]), # Aqui você inclui os atributos que quiser do fórum
+        posts: @posts.as_json(only: [:uuid, :title, :content, :created_at], methods: [:time_since_posted])
+      }
     else
       # Retorna um erro caso o fórum não seja encontrado
       render json: { error: "Forum not found" }, status: :not_found
