@@ -12,6 +12,23 @@ class ForumsController < ApplicationController
   def show
     render json: @forum.as_json(include: { forum_emojis: { only: :emoji } })
   end
+  
+  #  GET /forums/:alias/posts
+  def posts_by_alias
+    # Busca o fórum pelo alias
+    @forum = Forum.find_by(alias: params[:alias])
+  
+    # Se o fórum for encontrado, buscamos os posts associados
+    if @forum
+      @posts = Post.where(forum_id: @forum.id)
+  
+      # Retorna os posts no formato JSON
+      render json: @posts.as_json(only: [:uuid, :title, :content, :created_at], methods: [:time_since_posted])
+    else
+      # Retorna um erro caso o fórum não seja encontrado
+      render json: { error: "Forum not found" }, status: :not_found
+    end
+  end
 
   # POST /forums
   def create

@@ -27,6 +27,9 @@ Rails.application.routes.draw do
   # Rotas para posts
   resources :posts, param: :uuid
   
+  # Rotas para posts de um forum
+  get '/forums/:alias/posts', to: 'forums#posts_by_alias'
+  
   # Rotas para comentários
   resources :comments
 end
