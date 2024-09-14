@@ -25,7 +25,15 @@ class ForumsController < ApplicationController
       # Retorna o fórum e os posts no formato JSON
       render json: {
         forum: @forum.as_json(only: [:id, :alias, :name]), # Aqui você inclui os atributos que quiser do fórum
-        posts: @posts.as_json(only: [:uuid, :title, :content, :created_at], methods: [:time_since_posted])
+        posts: @posts.as_json(
+          methods: :time_since_posted,
+          include: {
+            forum: { except: [:_id] , include: {
+              forum_emojis: { only: :emoji }
+            }},
+            author: { only: [:name, :profile_picture, :theme_color, :description] }
+          }
+        )
       }
     else
       # Retorna um erro caso o fórum não seja encontrado
