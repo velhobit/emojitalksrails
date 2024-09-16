@@ -21,7 +21,7 @@ gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
-gem 'jwt', '~> 2.8', '>= 2.8.2'
+gem 'jwt', '~> 2.9'
 
 #Cors
 gem 'rack-cors'
