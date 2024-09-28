@@ -10,7 +10,16 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   # User routes
-  resources :users
+  resources :users do
+    member do
+      post 'follow'
+      delete 'unfollow'
+      post 'block'
+      delete 'unblock'
+    end
+  end
+  get 'users/current', to: 'users#current'
+  
   post 'signup', to: 'auth#signup'
   post 'login', to: 'auth#login'
   get 'validate_token', to: 'auth#validate_token'

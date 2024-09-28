@@ -1,6 +1,10 @@
-# app/controllers/application_controller.rb
 class ApplicationController < ActionController::API
   before_action :authorize_request
+
+  # Disponibiliza o usuário autenticado para outros controladores
+  def current_user
+    @current_user
+  end
 
   private
 

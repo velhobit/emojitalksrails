@@ -6,9 +6,9 @@ class PostsController < ApplicationController
   def index
     @posts = Post.includes(:forum, :author).order(last_update_date: :desc, created_at: :desc)
     render json: @posts.as_json(
-      methods: :time_since_posted,
+      methods: [:time_since_posted, :comment_count], # Inclua :comment_count
       include: {
-        forum: { except: [:_id] , include: {
+        forum: { except: [:_id], include: {
           forum_emojis: { only: :emoji }
         }},
         author: { only: [:name, :profile_picture, :theme_color, :description] }

@@ -20,7 +20,12 @@ class Post
   belongs_to :author, class_name: 'User'
   has_many :comments
 
-  # Method to calculate time since posted
+  # Método para contar comentários
+  def comment_count
+    comments.count
+  end
+
+  # Método para calcular o tempo desde que foi postado
   def time_since_posted
     return 'Just now' if created_at > 5.minutes.ago
 
