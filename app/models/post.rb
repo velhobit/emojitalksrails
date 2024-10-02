@@ -11,6 +11,7 @@ class Post
   field :closure_date, type: DateTime
   field :deletion_date, type: DateTime
   field :last_update_date, type: DateTime
+  field :emoji, type: String # Adiciona o campo emoji
 
   before_create :generate_uuid
   before_save :update_last_update_date
