@@ -21,6 +21,8 @@ gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
+gem 'kaminari-mongoid'
+
 gem 'jwt', '~> 2.8', '>= 2.8.2'
 
 #Cors

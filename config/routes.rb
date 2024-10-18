@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   # User routes
+  get 'users/current', to: 'users#current', as: 'current_user'
+
   resources :users do
     member do
       post 'follow'
@@ -18,7 +20,6 @@ Rails.application.routes.draw do
       delete 'unblock'
     end
   end
-  get 'users/current', to: 'users#current'
   
   post 'signup', to: 'auth#signup'
   post 'login', to: 'auth#login'
@@ -34,11 +35,20 @@ Rails.application.routes.draw do
   resources :forum_emojis
   
   # Rotas para posts
-  resources :posts, param: :uuid
+  resources :posts, param: :uuid do
+    member do
+      post :like   # Adiciona a rota para o método like
+      delete :unlike  # Adiciona a rota para o método unlike
+    end
+  end
   
   # Rotas para posts de um forum
   get '/forums/:alias/posts', to: 'forums#posts_by_alias'
   
   # Rotas para comentários
-  resources :comments
+  resources :comments do
+    collection do
+      get 'post/:post_uuid', to: 'comments#comments_by_post', as: 'by_post'
+    end
+  end
 end

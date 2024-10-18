@@ -12,6 +12,9 @@ class User
   field :uuid, type: String
   field :theme_color, type: String
   field :password_digest, type: String
+  field :role, type: String, default: 'normal' # Define o campo role com o valor padrão 'normal'
+
+  ROLES = %w[normal special verified staff admin] # Lista dos valores permitidos
 
   # Enable password encryption and authentication
   has_secure_password
@@ -28,6 +31,7 @@ class User
   validates :username, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true
   validates :password, presence: true, on: :create
+  validates :role, inclusion: { in: ROLES } # Validação para garantir que role esteja dentro dos valores permitidos
 
   # Callbacks
   before_create :generate_uuid

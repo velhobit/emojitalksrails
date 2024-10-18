@@ -124,6 +124,10 @@ GEM
     json (2.7.2)
     jwt (2.8.2)
       base64
+    kaminari-core (1.2.2)
+    kaminari-mongoid (1.0.2)
+      kaminari-core (~> 1.0)
+      mongoid
     language_server-protocol (3.17.0.3)
     logger (1.6.1)
     loofah (2.22.0)
@@ -329,6 +333,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jwt (~> 2.8, >= 2.8.2)
+  kaminari-mongoid
   mongoid (~> 9.0, >= 9.0.1)
   puma (>= 5.0)
   rack-cors
