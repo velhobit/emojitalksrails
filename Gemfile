@@ -23,7 +23,7 @@ gem "jbuilder"
 
 gem 'kaminari-mongoid'
 
-gem 'jwt', '~> 2.8', '>= 2.8.2'
+gem 'jwt', '~> 2.9'
 
 #Cors
 gem 'rack-cors'
