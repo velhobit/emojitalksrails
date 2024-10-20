@@ -10,7 +10,6 @@ class PostsController < ApplicationController
                  .order(last_update_date: :desc, created_at: :desc)
                  .page(params[:page])
                  .per(10)
-    
     render json: @posts.as_json(
       current_user_id: @current_user&.id,
       include: {

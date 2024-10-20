@@ -28,23 +28,26 @@ class Post
    @is_liked
  end
  
- # Método público para definir o valor de `is_liked`
- def set_is_liked(user_id)
-   # Se user_id não estiver presente, define @is_liked como false
-   @is_liked = user_id.present? && liked_by.include?(user_id)
+# Método público para definir o valor de `is_liked`
+def set_is_liked(user_id)
+ # Verifica se o user_id está presente e se está no array de `liked_by` (comparando como strings)
+ @is_liked = user_id.present? && liked_by.map(&:to_s).include?(user_id.to_s)
+end
+  
+  # Método para curtir o post
+ def like(user)
+   # Verifica se o usuário já curtiu
+   return if liked_by.map(&:to_s).include?(user.id.to_s)
+ 
+   # Adiciona o like e incrementa o contador
+   self.liked_by << user.id
+   self.likes_count += 1
+   save
  end
-  
-  def like(user)
-    return if liked_by.include?(user.id)
-  
-    self.liked_by << user.id
-    self.likes_count += 1
-    save
-  end
   
   # Método para remover um like do post
   def unlike(user)
-    return unless liked_by.include?(user.id)
+    return unless liked_by.map(&:to_s).include?(user.id.to_s)
   
     self.liked_by.delete(user.id)
     self.likes_count -= 1
