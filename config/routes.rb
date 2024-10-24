@@ -36,6 +36,9 @@ Rails.application.routes.draw do
   
   # Rotas para posts
   resources :posts, param: :uuid do
+    collection do
+      get :hot  # Adiciona a rota para o método hot
+    end
     member do
       post :like   # Adiciona a rota para o método like
       delete :unlike  # Adiciona a rota para o método unlike

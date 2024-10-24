@@ -22,6 +22,36 @@ class Post
   belongs_to :forum
   belongs_to :author, class_name: 'User'
   has_many :comments
+  
+  # Método para verificar a estrutura do liked_by
+  def valid_liked_by_structure?
+    liked_by.all? do |like|
+      like.is_a?(Hash) && like[:user_id].present? && like[:created_at].is_a?(Time)
+    end
+  end
+  
+  # Método para calcular a velocidade de likes nos últimos 10 dias
+  def like_speed_in_last_10_days(ten_days_ago)
+    return Float::INFINITY unless valid_liked_by_structure?
+  
+    recent_likes = liked_by.select do |like|
+      like[:created_at] >= ten_days_ago
+    end
+  
+    return Float::INFINITY if recent_likes.empty?
+  
+    # Calcule o intervalo de tempo entre o primeiro e o último like
+    first_like_time = recent_likes.first[:created_at]
+    last_like_time = recent_likes.last[:created_at]
+  
+    # Verifica o tempo total em segundos
+    time_span = (last_like_time - first_like_time).to_f
+  
+    return 1 if time_span.zero?
+  
+    # Retorna a quantidade de likes dividida pelo intervalo de tempo
+    recent_likes.size / time_span
+  end
 
  # Método para obter o estado do like
  def is_liked

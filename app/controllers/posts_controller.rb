@@ -1,7 +1,7 @@
 # app/controllers/posts_controller.rb
 class PostsController < ApplicationController
   before_action :set_post, only: %i[show update destroy like unlike]
-  before_action :set_current_user, only: %i[index show]
+  before_action :set_current_user, only: %i[index show hot]
   before_action :authorize_request, only: %i[create update destroy like unlike]
 
   # GET /posts
@@ -27,7 +27,46 @@ class PostsController < ApplicationController
     @post = Post.includes(:forum, :author, :comments).find_by(uuid: params[:uuid])
     render json: @post.as_json(
       current_user_id: @current_user&.id,
-      methods: [:time_since_posted, :comment_count],  # Incluindo comment_count
+      include: {
+        forum: { except: [:_id], include: {
+          forum_emojis: { only: :emoji }
+        }},
+        author: { only: [:name, :profile_picture, :theme_color, :description] }
+      },
+      except: [:_id],
+      methods: [:emoji] # Inclui o emoji no retorno
+    )
+  end
+  
+# GET /posts/hot
+  def hot
+    # Pegando todos os posts
+    posts = Post.all.to_a
+  
+    # Definindo o período de 10 dias
+    ten_days_ago = 10.days.ago
+    
+    # Ordenando os posts pela regra:
+    hot_posts = posts.sort_by do |post|
+      like_speed = post.like_speed_in_last_10_days(ten_days_ago)
+  
+      # Se não houver likes, colocamos um valor alto para que esses posts fiquem no final
+      speed_value = like_speed || Float::INFINITY
+      
+      [
+        speed_value,           # Menor intervalo de likes (menor valor é melhor)
+        -post.likes_count,     # Likes total (usar negativo para que mais likes fiquem primeiro)
+        -post.created_at.to_i  # Data de criação mais recente (usar negativo para que os mais novos fiquem primeiro)
+      ]
+    end
+  
+    # Implementando a paginação
+    page_number = params[:page].to_i > 0 ? params[:page].to_i : 1
+    per_page = 10
+    paginated_posts = Kaminari.paginate_array(hot_posts).page(page_number).per(per_page)
+  
+    render json: paginated_posts.as_json(
+      current_user_id: @current_user&.id,
       include: {
         forum: { except: [:_id], include: {
           forum_emojis: { only: :emoji }
@@ -58,12 +97,11 @@ class PostsController < ApplicationController
   def update
     if @post.update(post_params)
       render json: @post.as_json(
-        methods: :time_since_posted,
         include: {
           forum: { only: [:name] },
           author: { only: [:name, :profile_picture, :theme_color, :description] }
         },
-        methods: [:emoji] # Inclui o emoji no retorno
+        methods: [:time_since_posted, :emoji] # Inclui o emoji no retorno
       )
     else
       render json: @post.errors, status: :unprocessable_entity
